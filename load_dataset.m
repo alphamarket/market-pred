@@ -1,4 +1,7 @@
-if(exist('caches/dataset.dat', 'file'))
+if exist('dataset', 'var')
+  disp('The `dataset` already exists in workspace [No need to reload!].');
+  return
+elseif(exist('caches/dataset.dat', 'file'))
   fprintf('Loading cached dataset');
   dataset = importdata('caches/dataset.dat');
   fprintf(' [DONE]\n');

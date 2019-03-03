@@ -1,3 +1,7 @@
+if exist('gainset', 'var')
+  disp('The `gainset` already exists in workspace [No need to reload!].');
+  return
+end
 fprintf('Preprocessing the dataset')
 % the gain set of the dataset
 gainset = { };

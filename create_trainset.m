@@ -1,4 +1,7 @@
-if(exist('caches/trainset.dat', 'file'))
+if exist('trainset', 'var')
+  disp('The `trainset` already exists in workspace [No need to reload!].');
+  return
+elseif(exist('caches/trainset.dat', 'file'))
   fprintf('Loading cached trainset');
   trainset = importdata('caches/trainset.dat');
   fprintf(' [DONE]\n');
@@ -35,8 +38,8 @@ else
     fprintf(repmat('\b', 1, lastsize));
     lastsize = fprintf(' (%.1f%% of data processed)', set / length(gainset) * 100);
   end
-  clear set idx lastsize gset col
-  save('caches/trainset.dat', 'trainset')
+  save('caches/trainset.dat', 'trainset', '-v7.3')
   fprintf(repmat('\b', 1, lastsize));
   fprintf(' [DONE]\n');
+  clear set idx lastsize gset col
 end
