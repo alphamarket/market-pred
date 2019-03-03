@@ -1,20 +1,22 @@
-if(exist('dataset.dat', 'file'))
+if(exist('caches/dataset.dat', 'file'))
   fprintf('Loading cached dataset');
-  dataset = importdata('dataset.dat');
+  dataset = importdata('caches/dataset.dat');
   fprintf(' [DONE]\n');
 else
   dataset = { };
+  lastsize = 0;
   files = dir('data/csv/*.csv');
   for i=1:length(files)
     warning('OFF', 'MATLAB:table:ModifiedVarnames')
-    fprintf('(%.1f%%) Reading file: `%s`', i / length(files) * 100, files(i).name)
+    fprintf(repmat('\b', 1, lastsize));
+    lastsize = fprintf('(%.1f%%) Reading file: `%s`', i / length(files) * 100, files(i).name);
     d = readtable(sprintf('data/csv/%s', files(i).name));
-    dataset{end+1} = [d.x_FIRST_, d.x_LAST_, d.x_HIGH_, d.x_LOW_, d.x_VOL_];
+    dataset{end+1} = [d.x_OPEN_, d.x_HIGH_, d.x_LOW_, d.x_CLOSE_, d.x_VOL_];
     warning('ON', 'MATLAB:table:ModifiedVarnames')
-    fprintf(' [DONE]\n')
   end
   clear files i d
+  fprintf(repmat('\b', 1, lastsize));
   fprintf('Caching dataset to `dataset.dat` file')
-  save('dataset.dat', 'dataset')
+  save('caches/dataset.dat', 'dataset')
   fprintf(' [DONE]\n');
 end
