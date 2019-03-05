@@ -9,10 +9,10 @@ else
   fprintf('Creating the trainset')
   lastsize = 0;
   trainset = { };
-  map = [1, 3, 7, 14, 28, 56];
+  map = [1, 3, 7, 14, 28, 56, 112, 224];
   for set=1:length(gainset)
     gset = gainset{set};
-    if(size(gset, 1) < 57)
+    if(size(gset, 1) < max(map) + 1)
       continue
     end
     trainset{end + 1} = struct;

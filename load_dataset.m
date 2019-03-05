@@ -14,7 +14,7 @@ else
     fprintf(repmat('\b', 1, lastsize));
     lastsize = fprintf('(%.1f%%) Reading file: `%s`', i / length(files) * 100, files(i).name);
     d = readtable(sprintf('data/csv/%s', files(i).name));
-    dataset{end+1} = [d.x_OPEN_, d.x_HIGH_, d.x_LOW_, d.x_CLOSE_, d.x_VOL_];
+    dataset{end+1} = [d.x_OPEN_, d.x_HIGH_, d.x_LOW_, d.x_CLOSE_];
     warning('ON', 'MATLAB:table:ModifiedVarnames')
   end
   clear files i d
