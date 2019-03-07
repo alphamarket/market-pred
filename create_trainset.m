@@ -25,7 +25,7 @@ else
       for m = 1:length(map)
         eval(sprintf('trainset{end}.m%i{end + 1} = [];', map(m)));
       end
-      for idx=57:length(gset)
+      for idx=(max(map) + 1):length(gset)
         for m = 1:length(map)
           eval(sprintf('trainset{end}.m%i{end} = [trainset{end}.m%i{end}; gset(idx - %i:idx - 1, col)'', gset(idx, col)];', map(m), map(m), map(m)));
         end
