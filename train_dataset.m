@@ -1,8 +1,13 @@
 function module = train_dataset(tset) %#ok<INUSD>
   fprintf('Training the trainset...\n');
-  portions = [1, 3, 7, 14, 28, 56];
+  portions = [1, 3, 7, 14, 28, 56, 112, 224];
   module = struct;
   for i=1:length(portions)
+    if(exist(sprintf('caches/nets-m%i.dat', portions(i)), 'file'))
+      fprintf('[SKIP] Skipping the m-%i, because of it''s cache exists!\n', portions(i))
+      continue;
+    end
+    fprintf('Executing the train for m-%i...\n', portions(i));
     eval(sprintf('module.m%i = train_m(tset, %i);', portions(i), portions(i)));
   end
   save('caches/train-modules.dat', 'module')
