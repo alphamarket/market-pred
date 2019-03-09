@@ -5,6 +5,8 @@ function module = train_dataset(tset) %#ok<INUSD>
   for i=1:length(portions)
     if(exist(sprintf('caches/nets-m%i.dat', portions(i)), 'file'))
       fprintf('[SKIP] Skipping the m-%i, because of it''s cache exists!\n', portions(i))
+      tmp = importdata(sprintf('caches/nets-m%i.dat', portions(i))); %#ok<NASGU>
+      eval(sprintf('module.m%i = tmp.nets;', portions(i)));
       continue;
     end
     fprintf('Executing the train for m-%i...\n', portions(i));
@@ -34,6 +36,7 @@ function [nets, perf, infs] = train_m(set, m) %#ok<*DEFNU>
       x = sub_data(rdx, 1:m)';
       t = sub_data(rdx, m + 1)';
       % train the network
+      % [nets{col}, tr] = train(nets{col}, x, t);
       [nets{col}, tr] = train(nets{col}, x, t, 'useParallel', 'yes');
       % store the preformace history
       if(abs(tr.best_perf) ~= Inf)
@@ -55,20 +58,24 @@ end
 function net = build_network(m)
   switch(m)
     case 1
-      net = feedforwardnet(3);
+      net = feedforwardnet(m * 3);
     case 3
-      net = feedforwardnet(7);
+      net = feedforwardnet([m * 3, m]);
     case 7
-      net = feedforwardnet(14);
+      net = feedforwardnet([m * 4, m]);
     case 14
-      net = feedforwardnet(28);
+      net = feedforwardnet([m * 4, m / 2]);
     case 28
-      net = feedforwardnet(56);
+      net = feedforwardnet([m * 4, m]);
     case 56
-      net = feedforwardnet(112);
+      net = feedforwardnet([m * 4, m]);
     case 112
-      net = feedforwardnet(224);
+      net = feedforwardnet([m * 4, m]);
     case 224
-      net = feedforwardnet(448);
+      net = feedforwardnet([m * 4, m]);
   end
+  net.trainFcn = 'trainrp';
+  net.trainParam.goal = 1e-5;
+  net.trainParam.epochs = 300;
+  net.trainParam.max_fail = 3;
 end
