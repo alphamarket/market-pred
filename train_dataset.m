@@ -1,19 +1,28 @@
-function module = train_dataset(tset) %#ok<INUSD>
-  fprintf('Training the trainset...\n');
-  portions = [1, 3, 7, 14, 28, 56, 112, 224];
-  module = struct;
-  for i=1:length(portions)
-    if(exist(sprintf('caches/nets-m%i.dat', portions(i)), 'file'))
-      fprintf('[SKIP] Skipping the m-%i, because of it''s cache exists!\n', portions(i))
-      tmp = importdata(sprintf('caches/nets-m%i.dat', portions(i))); %#ok<NASGU>
-      eval(sprintf('module.m%i = tmp.nets;', portions(i)));
-      continue;
+function train_module = train_dataset(tset, periods) %#ok<INUSL>
+  if var_exists('train_module')
+    disp('The `train_module` already exists in workspace [No need to reload!].');
+    train_module = evalin('base', 'train_module');
+    return
+  elseif ~exist('caches/train-modules.dat', 'file')
+    fprintf('Training the trainset...\n');
+    train_module = struct;
+    for i=1:length(periods)
+      if(exist(sprintf('caches/nets-m%i.dat', periods(i)), 'file'))
+        fprintf('[SKIP] Skipping the m-%i, because of it''s cache exists!\n', periods(i))
+        tmp = importdata(sprintf('caches/nets-m%i.dat', periods(i))); %#ok<NASGU>
+        eval(sprintf('train_module.m%i = tmp.nets;', periods(i)));
+        continue;
+      end
+      fprintf('Executing the train for m-%i...\n', periods(i));
+      eval(sprintf('train_module.m%i = train_m(tset, %i);', periods(i), periods(i)));
     end
-    fprintf('Executing the train for m-%i...\n', portions(i));
-    eval(sprintf('module.m%i = train_m(tset, %i);', portions(i), portions(i)));
+    save('caches/train-modules.dat', 'train_module')
+    fprintf('All training modules trained! [DONE]\n')
+  else
+    fprintf('Loading the training module from cache...');
+    train_module = importdata('caches/train-modules.dat');
+    fprintf(' [DONE]\n');
   end
-  save('caches/train-modules.dat', 'module')
-  fprintf('All training modules trained! [DONE]\n')
 end
 
 function [nets, perf, infs] = train_m(set, m) %#ok<*DEFNU>
