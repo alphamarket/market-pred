@@ -52,13 +52,13 @@ function [nets, perf, infs] = train_m(set, m) %#ok<*DEFNU>
   save(sprintf('caches/nets-m%i.dat', m), 'nets', 'perf', 'infs')
   % print the completion
   fprintf(repmat('\b', 1, last_size));
-  fprintf('Training the m-{%i} [DONE]', m)
+  fprintf('Training the m-{%i} [DONE]\n', m)
 end
 
 function net = build_network(m)
   switch(m)
     case 1
-      net = feedforwardnet(m * 3);
+      net = feedforwardnet([m * 3, m * 2]);
     case 3
       net = feedforwardnet([m * 3, m]);
     case 7
@@ -72,7 +72,7 @@ function net = build_network(m)
     case 112
       net = feedforwardnet([m * 4, m]);
     case 224
-      net = feedforwardnet([m * 4, m]);
+      net = feedforwardnet([m, m * 2]);
   end
   net.trainFcn = 'trainrp';
   net.trainParam.goal = 1e-5;
